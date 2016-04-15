@@ -1,13 +1,43 @@
-# Create snake
-buffer = new ArrayBuffer(26)
-view = new DataView(buffer)
+message = require '../utils/message'
 
-## Append last client message
-view.setUint8 0, 0
-view.setUint8 1, global.Server.getElapsedTime()
+exports.build = (snake) ->
+  usernameLength = snake.username.length
+  partsLength = snake.parts.length * 2
 
-## Append message type
-type = 's'
-view.setUint8 2, type.charCodeAt(0)
+  buffer = new Uint8Array(27 + usernameLength + partsLength * 2)
+  b = 0
 
-exports.buffer = buffer
+  b += message.writeInt8 b, buffer, 0
+  b += message.writeInt8 b, buffer, 0
+
+  b += message.writeInt8 b, buffer, 's'.charCodeAt(0)
+  b += message.writeInt16 b, buffer, snake.id
+  b += message.writeInt24 b, buffer, snake.D
+
+  b += message.writeInt8 b, buffer, 0
+  b += message.writeInt24 b, buffer, snake.X
+  b += message.writeInt16 b, buffer, snake.speed
+  b += message.writeInt24 b, buffer, snake.H
+  b += message.writeInt8 b, buffer, snake.skin
+  b += message.writeInt24 b, buffer, snake.xPos
+  b += message.writeInt24 b, buffer, snake.yPos
+
+  b += message.writeInt8 b, buffer, usernameLength
+
+  message.writeString b, buffer, snake.username
+
+  index = b + usernameLength
+  message.writeInt24 index, buffer, snake.xPosHead
+  message.writeInt24 index + 3, buffer, snake.yPosHead
+  index += 6
+
+  i = 0
+  while i < snake.parts.length
+    message.writeInt8 index, buffer, snake.parts[i].x
+    message.writeInt8 index + 1, buffer, snake.parts[i].y
+
+    index += 2
+
+    i++
+
+  buffer

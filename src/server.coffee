@@ -1,8 +1,10 @@
-ws = require "ws"
-url = require "url"
+ws = require 'ws'
+url = require 'url'
 
-logger = require "./utils/logger"
-misc = require "./utils/misc"
+snake = require './entities/snake'
+
+logger = require './utils/logger'
+misc = require './utils/misc'
 
 module.exports =
 class Server
@@ -13,7 +15,7 @@ class Server
   server: null
   clients: []
 
-  lastMessageTime: new Date
+  counter: 0
 
   ###
   Section: Construction
@@ -25,7 +27,7 @@ class Server
   Section: Public
   ###
   bind: ->
-    @server = new ws.Server {@port}, =>
+    @server = new ws.Server {@port, path: '/slither'}, =>
       @logger.log @logger.level.INFO, "Listening on port #{@port}"
 
     @server.on 'connection', @handleConnection.bind(this)
@@ -45,9 +47,9 @@ class Server
     origin = conn.upgradeReq.headers.origin
     unless global.Application.config.origins.indexOf(origin) > -1
       conn.close()
-      console.log origin
       return
 
+    conn.id = @counter++
     conn.remoteAddress = conn._socket.remoteAddress
 
     # Bind socket connection methods
@@ -55,9 +57,8 @@ class Server
       @logger.log @logger.level.DEBUG, 'Connection closed.'
 
       conn.send = -> return
-      # @clients = @clients.filter (client) -> conn.user.id isnt client.user.id
-
-      # Broadcast disconnection ...
+      
+      delete @clients[conn.id]
 
     conn.on 'message', @handleMessage.bind(this, conn)
     conn.on 'error', close
@@ -78,48 +79,26 @@ class Server
 
     # Ping / pong
     if packetId is 'p'
-      @send conn, require('./packets/pong').build()
+      @send conn, require('./packets/pong').buffer
     # Create snake
     else if packetId is 's'
       i = 3
-      nick = ''
+      username = ''
       while i < view.byteLength
-        nick += String.fromCharCode view.getUint8(i, true)
+        username += String.fromCharCode view.getUint8(i, true)
 
         i++
 
-      @send conn, require('./packets/snake').build(nick)
+      connSnake = new snake(conn.id, username, misc.randomInt(0, 26))
+      @send conn, require('./packets/snake').build connSnake
+
+      @logger.log @logger.level.DEBUG, "A new snake called #{connSnake.username} was connected!"
     # Handle unknown messages
     else
       @logger.log @logger.level.ERROR, "Unhandled packet #{packetId}", null
 
-    if packetId isnt 'p'
-      @lastMessageTime = new Date
-
-    ###
-    message = message.toString 'utf8'
-
-    @logger.log @logger.level.DEBUG, "Message received: #{message}"
-
-    # Create snake
-    if message.startsWith 's'
-      nickname = message.substr 3
-
-      console.log 'Trying to create a snake called', nickname
-    # Ping / pong
-    else if message is 'p'
-      @send conn, require('./packets/pong').build()
-
-    # Update last message time from client
-    if message isnt 'p'
-      @lastMessageTime = new Date
-    ###
-
   handleError: (e) ->
     @logger.log @logger.level.ERROR, e.message, e
-
-  getElapsedTime: ->
-    time = Math.floor((new Date - @lastMessageTime) / 1000)
 
   send: (conn, data) ->
     conn.send data, {binary: true}

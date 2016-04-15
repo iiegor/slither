@@ -1,15 +1,7 @@
-# Pong
-buffer = new ArrayBuffer(3)
-view = new DataView(buffer)
+message = require '../utils/message'
 
-exports.build = ->
-  type = 'p'
-  view.setUint8 0, 0
+buffer = new Uint8Array(3)
 
-  ## Append last message date
-  view.setUint8 1, global.Server.getElapsedTime()
+message.writeInt8 3, buffer, 'p'.charCodeAt(0)
 
-  ## Append message type
-  view.setUint8 2, type.charCodeAt(0)
-
-  return buffer
+exports.buffer = buffer
