@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+var safeExec = require('./utils/child-process-wrapper.js').safeExec;
+var path = require('path');
+var deps = require('../package.json').packageDependencies;
+
+process.chdir(path.dirname(__dirname));
+
+for (dep in deps) {
+  var name = dep,
+    version = deps[dep];
+
+  safeExec('npm install ' + name + '@' + version, function() {
+    console.log('> Package dependencies installed!')
+  });
+}

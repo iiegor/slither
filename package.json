@@ -1,0 +1,28 @@
+{
+  "name": "slither-server",
+  "description": "Open source slither server implementation",
+  "version": "0.0.1",
+  "main": "./src/bootstrap",
+  "bin": {
+    "slither": "./bin/slither"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iiegor/slither"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "coffee-script": "^1.10.0",
+    "colors": "^1.1.2",
+    "elementtree": "^0.1.6",
+    "mysql": "^2.9.0",
+    "semver": "^5.0.3",
+    "underscore": "^1.8.3",
+    "ws": "^0.8.0"
+  },
+  "packageDependencies": {},
+  "scripts": {
+    "start": "node ./bin/slither"
+  },
+  "private": true
+}

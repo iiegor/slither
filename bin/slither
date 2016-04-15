@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+var Kekocity, Application;
+
+Kekocity = function() {
+  setupCompiler = function() {
+    var CoffeeScript;
+    CoffeeScript = null;
+    return require.extensions['.coffee'] = function(module, filePath) {
+      var coffee, js;
+      if (CoffeeScript == null) {
+        CoffeeScript = require('coffee-script');
+      }
+      coffee = require('fs').readFileSync(filePath, 'utf8');
+      js = CoffeeScript.compile(coffee, {
+        filename: filePath
+      });
+      return module._compile(js, filePath);
+    };
+  };
+
+  bootstrap = function() {
+    require('coffee-script/register'), Application = new (require('../src/bootstrap'));
+  };
+
+  return this.bootstrap();
+}
+
+Kekocity();
