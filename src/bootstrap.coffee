@@ -42,8 +42,6 @@ class Application
   Section: Private
   ###
   bootstrap: ->
-    @logger.log @logger.level.INFO, 'Checking connectivity with database...'
-
     server = new server @config.port
     server.bind()
 
@@ -64,7 +62,7 @@ class Application
       try
         # Validate package
         depPkg = require "#{key}/package.json"
-        depEngine = depPkg.engines['xat-server']
+        depEngine = depPkg.engines['slither-server']
 
         if typeof depEngine is 'undefined'
           return throw new Error('The plugin does not support this server')

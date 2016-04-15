@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-var Kekocity, Application;
+var Slither, Application;
 
-Kekocity = function() {
+Slither = function() {
   setupCompiler = function() {
     var CoffeeScript;
     CoffeeScript = null;
@@ -26,4 +26,4 @@ Kekocity = function() {
   return this.bootstrap();
 }
 
-Kekocity();
+Slither();
