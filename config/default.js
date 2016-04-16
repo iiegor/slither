@@ -10,4 +10,4 @@ module.exports = {
   'max-mass': 85500,
   'border-size': 6000,
   'map-size': 216000,
-}
+};
