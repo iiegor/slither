@@ -1,0 +1,100 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+  <title>slither.io</title>
+  
+ </head>
+ <body>
+  
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=176856125140";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+<div id='social' style='position: fixed; left: 6px; top: 6px; width: 200px; z-index: 9999999;'>
+ <div id='ytfhol' style='opacity: 0;'>
+  <script src="https://apis.google.com/js/platform.js"></script>
+
+  <div class="g-ytsubscribe" data-channelid="UCAGtxuWcErNsU5dn_miwcVA" data-layout="default" data-theme="dark" data-count="default"></div>
+ </div>
+ 
+ <div id='fbfhol' style='opacity: 0; margin-top: 6px;'>
+  <div class="fb-like" data-href="https://www.facebook.com/slitheriogame/" data-width="100" data-layout="button" data-action="like" data-show-faces="true" data-share="true"></div>
+ </div>
+
+ <div id='twfhol' style='opacity: 0; margin-top: 6px;'>
+<a href="https://twitter.com/slitheriogame" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false">Follow @slitheriogame</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+ </div>
+
+</div>
+
+  <script type='text/javascript'>
+
+window.onerror = function (message, url, lineNumber) {
+ console.log(message+', '+url+', '+lineNumber);
+}
+
+
+var sdan = false; // social done animating
+
+var sshfr = 0;
+
+var social = document.getElementById('social');
+var ytfhol = document.getElementById('ytfhol');
+var fbfhol = document.getElementById('fbfhol');
+var twfhol = document.getElementById('twfhol');
+
+
+var cssoc = false;
+
+var load_tm = Date.now();
+var oef_iv = -1;
+
+var ltm = Date.now();
+
+function oef () {
+ var ctm = Date.now();
+ vfr = (ctm - ltm)/8;
+ ltm = ctm;
+ if (!cssoc) { // can show social
+  if (social.offsetHeight > 66) { // ok
+   cssoc = true;
+   load_tm = Date.now(); // a lie, but keeps the loop alive til the animation is done
+  } else if (ctm - load_tm > 6000) { // too long to load. just give up
+   clearInterval(oef_iv);
+  }
+ } else if (!sdan) { //social done animating
+  sshfr += vfr/203;
+  var k = Math.pow(Math.min(1, Math.max(0, sshfr)), .5);
+  if (ytfhol) {
+   ytfhol.style.opacity = .8*k;//Math.sin(2.3 * k);
+   //ytfhol.style.marginTop = (Math.round((9 - 9*k)*1000)/1000) + 'px';
+  }
+  var k = Math.pow(Math.min(1, Math.max(0, sshfr - .22)), .5);
+  if (fbfhol) {
+   fbfhol.style.opacity = .8*k;//Math.sin(2.3 * k);
+   //fbfhol.style.marginTop = (Math.round((15 - 9*k)*1000)/1000) + 'px';
+  }
+  var k = Math.pow(Math.min(1, Math.max(0, sshfr - .44)), .5);
+  if (twfhol) {
+   twfhol.style.opacity = .8*k;//Math.sin(2.3 * k);
+   //twfhol.style.marginTop = (Math.round((15 - 9*k)*1000)/1000) + 'px';
+  }
+  if (sshfr >= 1.44) {
+   sdan = true;
+   clearInterval(oef_iv);
+  }
+ }
+}
+
+oef_iv = setInterval('oef()', 25);
+
+  </script>
+ </body>
+</html>
