@@ -14,7 +14,6 @@
   "dependencies": {
     "coffee-script": "^1.10.0",
     "colors": "^1.1.2",
-    "elementtree": "^0.1.6",
     "mysql": "^2.9.0",
     "object-keys": "^1.0.9",
     "semver": "^5.0.3",

@@ -93,6 +93,8 @@ class Server
       @send conn, require('./packets/snake').build connSnake
 
       @logger.log @logger.level.DEBUG, "A new snake called #{connSnake.username} was connected!"
+
+      @send conn, new Uint8Array([0, 24, 119, 2, 0, 69, 0, 46])
     # Handle unknown messages
     else
       @logger.log @logger.level.ERROR, "Unhandled packet #{packetId}", null
