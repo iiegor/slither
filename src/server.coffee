@@ -16,6 +16,8 @@ class Server
   server: null
   counter: 0
   clients: []
+  time: new Date
+  tick: 0
 
   foods: []
 
@@ -31,6 +33,8 @@ class Server
   bind: ->
     @server = new ws.Server {@port, path: '/slither'}, =>
       @logger.log @logger.level.INFO, "Listening on port #{@port}"
+
+      setInterval(@ticker.bind(this), 1)
 
     @server.on 'connection', @handleConnection.bind(this)
     @server.on 'error', @handleError.bind(this)
@@ -115,6 +119,15 @@ class Server
 
   handleError: (e) ->
     @logger.log @logger.level.ERROR, e.message, e
+
+  ticker: ->
+    local = new Date
+
+    @tick += (local - @time)
+    @time = local
+
+    if @tick >= 50
+      @tick = 0
 
   send: (id, data) ->
     @clients[id].send data, {binary: true}
