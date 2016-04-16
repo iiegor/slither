@@ -14,9 +14,10 @@ class Server
   ###
   logger: new logger(this)
   server: null
+  counter: 0
   clients: []
 
-  counter: 0
+  foods: []
 
   ###
   Section: Construction
@@ -79,9 +80,14 @@ class Server
       value = message.readInt8 0, data
 
       # Ping / pong
-      if value is 251
+      if value is 250
+        console.log 'Snake going to', value
+      else if value is 253
+        console.log 'Snake in speed mode -', value
+      else if value is 254
+        console.log 'Snake in normal mode -', value
+      else if value is 251
         @send conn.id, require('./packets/pong').buffer
-
     else
       ###
       firstByte:
@@ -99,8 +105,13 @@ class Server
         conn.snake = new snake(conn.id, username, math.randomInt(0, 26))
 
         @broadcast require('./packets/snake').build(conn.snake)
+        @send conn.id, require('./packets/food').build(@foods)
 
         @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.username} was connected!"
+      else if firstByte is 109
+        console.log '->', secondByte
+      else
+        @logger.log @logger.level.ERROR, "Unhandled message #{String.fromCharCode(firstByte)}", null
 
   handleError: (e) ->
     @logger.log @logger.level.ERROR, e.message, e
