@@ -1,4 +1,4 @@
-misc = require '../utils/misc'
+math = require '../utils/math'
 
 module.exports =
 class Snake
@@ -8,7 +8,7 @@ class Snake
   constructor: (@id, @username, @skin) ->
     @speed = 5.76 * 1e3
 
-    pos = misc.randomSpawnPoint()
+    pos = math.randomSpawnPoint()
 
     @xPos = pos.x
     @yPos = pos.y
@@ -21,12 +21,7 @@ class Snake
 
     @parts = [
       {
-        x: 1
-        y: 2
-      }
-
-      {
-        x: 3
-        y: 4
+        x: 138
+        y: 43
       }
     ]

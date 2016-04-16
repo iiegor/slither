@@ -4,7 +4,8 @@ url = require 'url'
 snake = require './entities/snake'
 
 logger = require './utils/logger'
-misc = require './utils/misc'
+message = require './utils/message'
+math = require './utils/math'
 
 module.exports =
 class Server
@@ -52,6 +53,9 @@ class Server
     conn.id = @counter++
     conn.remoteAddress = conn._socket.remoteAddress
 
+    # Push to clients
+    @clients[conn.id] = conn
+
     # Bind socket connection methods
     close = =>
       @logger.log @logger.level.DEBUG, 'Connection closed.'
@@ -64,48 +68,49 @@ class Server
     conn.on 'error', close
     conn.on 'close', close
 
-    # Add the client
-    @clients.push conn
+    @send conn.id, require('./packets/map').buffer
 
-    @send conn, require('./packets/map').buffer
+  handleMessage: (conn, data) ->
+    return if data.length == 0
 
-  handleMessage: (conn, message) ->
-    return if message.length == 0
+    data = new Uint8Array data
 
-    buffer = misc.stobuf message
-    view = new DataView buffer
+    if data.byteLength is 1
+      value = message.readInt8 0, data
 
-    packetId = String.fromCharCode view.getUint8(0, true)
+      # Ping / pong
+      if value is 251
+        @send conn.id, require('./packets/pong').buffer
 
-    # Ping / pong
-    if packetId is 'p'
-      @send conn, require('./packets/pong').buffer
-    # Create snake
-    else if packetId is 's'
-      i = 3
-      username = ''
-      while i < view.byteLength
-        username += String.fromCharCode view.getUint8(i, true)
-
-        i++
-
-      connSnake = new snake(conn.id, username, misc.randomInt(0, 26))
-      @send conn, require('./packets/snake').build connSnake
-
-      @logger.log @logger.level.DEBUG, "A new snake called #{connSnake.username} was connected!"
-    # Handle unknown messages
     else
-      @logger.log @logger.level.ERROR, "Unhandled packet #{packetId}", null
+      ###
+      firstByte:
+        115 - 's'
+      ###
+      firstByte = message.readInt8 0, data
+      secondByte = message.readInt8 1, data
+
+      type = message.readInt8 2, data
+
+      # Create snake
+      if firstByte is 115 and secondByte is 5
+        username = message.readString 3, data, data.byteLength
+
+        conn.snake = new snake(conn.id, username, math.randomInt(0, 26))
+
+        @broadcast require('./packets/snake').build(conn.snake)
+
+        @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.username} was connected!"
 
   handleError: (e) ->
     @logger.log @logger.level.ERROR, e.message, e
 
-  send: (conn, data) ->
-    conn.send data, {binary: true}
+  send: (id, data) ->
+    @clients[id].send data, {binary: true}
 
-  broadcast: (msg) ->
+  broadcast: (data) ->
     for client in @clients
-      client.send JSON.stringify(msg)
+      client.send data, {binary: true}
 
   close: ->
     @server.close()
