@@ -6,6 +6,6 @@ module.exports = {
   'logfile': 'slither.log',
   'food-colors': 23,
   'food-size': [35, 70],
-  'start-food': 1000,
+  'start-food': 22000,
   'map-size': 216000,
 };

@@ -150,8 +150,8 @@ class Server
   spawnFood: (amount) ->
     i = 0
     while i < amount
-      xPos = math.randomInt(22907, 30000)
-      yPos = math.randomInt(19137, 30337)
+      xPos = math.randomInt(0, 65535)
+      yPos = math.randomInt(0, 65535)
       id = xPos * global.Application.config['map-size'] * 3 + yPos
       color = math.randomInt(0, global.Application.config['food-colors'])
       size = math.randomInt(global.Application.config['food-size'][0], global.Application.config['food-size'][1])
