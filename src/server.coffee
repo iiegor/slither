@@ -105,13 +105,13 @@ class Server
       firstByte = message.readInt8 0, data
       secondByte = message.readInt8 1, data
 
-      type = message.readInt8 2, data
-
       # Create snake
       if firstByte is 115 and secondByte is 5
+        # TODO: Maybe we need to check if the skin exists?
+        skin = message.readInt8 2, data
         username = message.readString 3, data, data.byteLength
 
-        conn.snake = new snake(conn.id, username, math.randomInt(0, 26))
+        conn.snake = new snake(conn.id, username, skin)
 
         @broadcast require('./packets/snake').build(conn.snake)
         
