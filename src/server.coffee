@@ -112,6 +112,8 @@ class Server
         conn.snake = new snake(conn.id, username, math.randomInt(0, 26))
 
         @broadcast require('./packets/snake').build(conn.snake)
+        @send conn.id, require('./packets/highscore').build('iiegor', 'test message')
+
         #@send conn.id, require('./packets/food').build(@foods)
 
         @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.username} was connected!"
@@ -130,6 +132,17 @@ class Server
     @time = local
 
     if @tick >= 50
+      # Leaderboard packet is sended here
+
+      # Test
+      ###
+      for client in @clients
+        client.snake.xPos += 1
+        client.snake.yPos += 1
+
+        @broadcast require('./packets/direction').build(client.id, client.snake.xPos, client.snake.yPos)
+      ###
+
       @tick = 0
 
   spawnFood: (amount) ->
