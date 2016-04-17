@@ -1,5 +1,7 @@
 # slither ![npm-deps](https://david-dm.org/iiegor/slither.svg)
 
+![This is currently under extremely active development, and you probably shouldn't use it unless you like broken software.](https://drive.google.com/uc?export=download&id=0B9WchF8WhEn9YTZnQkZvNzMzaDg "This is currently under extremely active development, and you probably shouldn't use it unless you like broken software.")
+
 This is supposed to be an open source implementation of the slither server built on top of Node.js that emulates the full functionality of the original server.
 
 ## Install
