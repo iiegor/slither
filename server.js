@@ -1,1 +1,1 @@
-require('./bin/kekocity');
+require('./bin/slither');
