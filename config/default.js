@@ -5,7 +5,7 @@ module.exports = {
   'max-connections': 100,
   'logfile': 'slither.log',
   'food-size': 1,
-  'food-start-amount': 100,
+  'start-food': 100,
   'start-mass': 35,
   'max-mass': 85500,
   'border-size': 6000,
