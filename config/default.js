@@ -1,13 +1,11 @@
 module.exports = {
   'env': 'dev',
   'port': process.env.PORT || 8080,
-  'origins': ['http://localhost:8000'],
-  'max-connections': 100,
+  'origins': ['http://localhost:8000', 'http://slither.io'],
+  'max-connections': 1000,
   'logfile': 'slither.log',
-  'food-size': 1,
-  'start-food': 100,
-  'start-mass': 35,
-  'max-mass': 85500,
-  'border-size': 6000,
+  'food-colors': 23,
+  'food-size': [35, 70],
+  'start-food': 1000,
   'map-size': 216000,
 };

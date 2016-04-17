@@ -95,6 +95,8 @@ class Server
         console.log 'Snake in normal mode -', value
       else if value is 251
         @send conn.id, require('./packets/pong').buffer
+
+      @send conn.id, require('./packets/direction').build(conn.snake.id)
     else
       ###
       firstByte:
@@ -112,9 +114,9 @@ class Server
         conn.snake = new snake(conn.id, username, math.randomInt(0, 26))
 
         @broadcast require('./packets/snake').build(conn.snake)
-        @send conn.id, require('./packets/highscore').build('iiegor', 'test message')
-
-        #@send conn.id, require('./packets/food').build(@foods)
+        
+        @send conn.id, require('./packets/food').build(@foods)
+        # @send conn.id, require('./packets/highscore').build('iiegor', 'test message')
 
         @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.username} was connected!"
       else if firstByte is 109
@@ -137,10 +139,10 @@ class Server
       # Test
       ###
       for client in @clients
-        client.snake.xPos += 1
-        client.snake.yPos += 1
+        client.snake.body.x += 1
+        client.snake.body.y += 1
 
-        @broadcast require('./packets/direction').build(client.id, client.snake.xPos, client.snake.yPos)
+        @broadcast require('./packets/direction').build(client.id, client.snake.body.x, client.snake.body.y)
       ###
 
       @tick = 0
@@ -148,9 +150,13 @@ class Server
   spawnFood: (amount) ->
     i = 0
     while i < amount
-      position = math.randomSpawnPoint()
+      xPos = math.randomInt(22907, 30000)
+      yPos = math.randomInt(19137, 30337)
+      id = xPos * global.Application.config['map-size'] * 3 + yPos
+      color = math.randomInt(0, global.Application.config['food-colors'])
+      size = math.randomInt(global.Application.config['food-size'][0], global.Application.config['food-size'][1])
 
-      @foods.push(new food(i, position.x, position.y, 1, 1))
+      @foods.push(new food(id, xPos, yPos, size, color))
 
       i++
 

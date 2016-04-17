@@ -6,6 +6,7 @@ var deps = require('../package.json').packageDependencies;
 
 process.chdir(path.dirname(__dirname));
 
+console.log('> Installing package dependencies...')
 for (dep in deps) {
   var name = dep,
     version = deps[dep];

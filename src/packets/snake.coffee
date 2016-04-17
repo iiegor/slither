@@ -19,16 +19,16 @@ exports.build = (snake) ->
   b += message.writeInt16 b, buffer, snake.speed
   b += message.writeInt24 b, buffer, snake.H
   b += message.writeInt8 b, buffer, snake.skin
-  b += message.writeInt24 b, buffer, snake.xPos
-  b += message.writeInt24 b, buffer, snake.yPos
+  b += message.writeInt24 b, buffer, snake.body.x
+  b += message.writeInt24 b, buffer, snake.body.y
 
   b += message.writeInt8 b, buffer, usernameLength
 
   message.writeString b, buffer, snake.username
 
   index = b + usernameLength
-  message.writeInt24 index, buffer, snake.xPosHead
-  message.writeInt24 index + 3, buffer, snake.yPosHead
+  message.writeInt24 index, buffer, snake.head.x
+  message.writeInt24 index + 3, buffer, snake.head.y
   index += 6
 
   i = 0

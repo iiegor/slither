@@ -10,11 +10,11 @@ class Snake
 
     pos = math.randomSpawnPoint()
 
-    @xPos = pos.x
-    @yPos = pos.y
+    @body =
+      x: pos.x
+      y: pos.y
 
-    @xPosHead = pos.x
-    @yPosHead = pos.y
+    @head = @body
 
     @D = 3.1415926535 / Math.PI * 16777215
     @X = @D

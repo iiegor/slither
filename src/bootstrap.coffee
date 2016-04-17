@@ -68,7 +68,6 @@ class Application extends EventEmitter
           return throw new Error("Compatibility error (#{depEngine})")
         else
           dep = require plugin
-          dep.initialize(@)
       catch error then @logger.log @logger.level.ERROR, "Cannot load '#{plugin}' plugin", error
 
   # Dispose with success code
