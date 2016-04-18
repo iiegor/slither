@@ -83,8 +83,6 @@ class Server
   handleMessage: (conn, data) ->
     return if data.length == 0
 
-    data = new Uint8Array data
-
     if data.byteLength is 1
       value = message.readInt8 0, data
 
