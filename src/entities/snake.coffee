@@ -22,6 +22,11 @@ class Snake
     @J = 306
     @I = 0.7810754645511785 * 16777215
 
+    @direction =
+      x: 0.1
+      y: 0.1
+      angle: 0
+
     @parts = [
       {
         x: 138

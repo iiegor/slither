@@ -4,7 +4,7 @@ exports.build = (snake) ->
   usernameLength = snake.username.length
   partsLength = snake.parts.length * 2
 
-  buffer = new Uint8Array(27 + usernameLength + partsLength * 2)
+  buffer = new Uint8Array(27 + usernameLength + 6 + partsLength)
   b = 0
 
   b += message.writeInt8 b, buffer, 0
@@ -15,6 +15,7 @@ exports.build = (snake) ->
   b += message.writeInt24 b, buffer, snake.D
 
   b += message.writeInt8 b, buffer, 0
+
   b += message.writeInt24 b, buffer, snake.X
   b += message.writeInt16 b, buffer, snake.speed
   b += message.writeInt24 b, buffer, snake.H

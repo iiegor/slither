@@ -46,6 +46,8 @@ class Server
   Section: Private
   ###
   handleConnection: (conn) ->
+    conn.binaryType = 'arraybuffer'
+
     # Limit connections
     if @clients.length >= global.Application.config['max-connections']
       conn.close()
@@ -87,8 +89,14 @@ class Server
       value = message.readInt8 0, data
 
       # Ping / pong
-      if value is 250
+      if value <= 250
         console.log 'Snake going to', value
+
+        deg = value * 1.44
+
+        conn.snake.direction.x = Math.cos(deg) / 5
+        conn.snake.direction.y = Math.sin(deg) / 5
+        conn.snake.direction.angle = deg
       else if value is 253
         console.log 'Snake in speed mode -', value
       else if value is 254
@@ -96,7 +104,13 @@ class Server
       else if value is 251
         @send conn.id, require('./packets/pong').buffer
 
-      @send conn.id, require('./packets/direction').build(conn.snake.id)
+      if conn.snake?
+        conn.snake.body.x += conn.snake.direction.x
+        conn.snake.body.y += conn.snake.direction.y
+
+        @send conn.id, require('./packets/position').build(conn.snake)
+        @send conn.id, require('./packets/direction').build(conn.snake)
+
     else
       ###
       firstByte:
@@ -116,7 +130,7 @@ class Server
         @broadcast require('./packets/snake').build(conn.snake)
         
         @send conn.id, require('./packets/food').build(@foods)
-        # @send conn.id, require('./packets/highscore').build('iiegor', 'test message')
+        @send conn.id, require('./packets/highscore').build('iiegor', 'test message')
 
         @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.username} was connected!"
       else if firstByte is 109
