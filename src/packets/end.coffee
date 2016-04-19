@@ -1,14 +1,14 @@
 message = require '../utils/message'
 
-buffer = new Uint8Array(4)
+arr = new Uint8Array(4)
 
-message.writeInt8 0, buffer, 0
-message.writeInt8 1, buffer, 0
+message.writeInt8 0, arr, 0
+message.writeInt8 1, arr, 0
 
 ## Append message type
-message.writeInt8 2, buffer, 'v'.charCodeAt(0)
+message.writeInt8 2, arr, 'v'.charCodeAt(0)
 
 ## 2 - Closing socket and no victory message | 0 - Normal
-message.writeInt8 3, buffer, 0
+message.writeInt8 3, arr, 0
 
-exports.buffer = buffer
+exports.buffer = arr

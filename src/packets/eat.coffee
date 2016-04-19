@@ -1,12 +1,12 @@
 message = require '../utils/message'
 
-buffer = new Uint8Array(11)
+arr = new Uint8Array(11)
 
 b = 0
-b += message.writeInt8 b, buffer, 0
-b += message.writeInt8 b, buffer, 0
+b += message.writeInt8 b, arr, 0
+b += message.writeInt8 b, arr, 0
 
 ## Append message type
-b += message.writeInt8 b, buffer, 'h'.charCodeAt(0)
+b += message.writeInt8 b, arr, 'h'.charCodeAt(0)
 
-buffer
+exports.buffer = arr

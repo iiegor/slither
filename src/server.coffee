@@ -37,8 +37,6 @@ class Server
 
       @spawnFood(global.Application.config['start-food'])
 
-      setInterval(@ticker.bind(this), 1)
-
     @server.on 'connection', @handleConnection.bind(this)
     @server.on 'error', @handleError.bind(this)
 
@@ -60,7 +58,8 @@ class Server
       conn.close()
       return
 
-    conn.id = @counter++
+    @counter++
+    conn.id = @counter
     conn.remoteAddress = conn._socket.remoteAddress
 
     # Push to clients
@@ -90,25 +89,34 @@ class Server
       if value <= 250
         console.log 'Snake going to', value
 
-        deg = value * 1.44
+        radians = (value * 1.44) * (Math.PI / 180)
+        degrees = 0
+        speed = 1
 
-        conn.snake.direction.x = Math.cos(deg) / 5
-        conn.snake.direction.y = Math.sin(deg) / 5
-        conn.snake.direction.angle = deg
+        x = Math.cos(radians) + 1 * speed
+        y = Math.sin(radians) + 1 * speed
+
+        conn.snake.direction.x = x * 125
+        conn.snake.direction.y = y * 125
+
+        conn.snake.direction.angle = degrees
       else if value is 253
         console.log 'Snake in speed mode -', value
       else if value is 254
         console.log 'Snake in normal mode -', value
       else if value is 251
+        # Leaderboard
+        @updateLeaderboard()
+
+        # Snake movement
+        if conn.snake?
+          conn.snake.body.x += conn.snake.direction.x
+          conn.snake.body.y += conn.snake.direction.y
+
+          @send conn.id, require('./packets/move').build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
+        
+        # Pong
         @send conn.id, require('./packets/pong').buffer
-
-      if conn.snake?
-        conn.snake.body.x += conn.snake.direction.x
-        conn.snake.body.y += conn.snake.direction.y
-
-        @send conn.id, require('./packets/position').build(conn.snake)
-        @send conn.id, require('./packets/direction').build(conn.snake)
-
     else
       ###
       firstByte:
@@ -127,8 +135,8 @@ class Server
 
         @broadcast require('./packets/snake').build(conn.snake)
         
-        @send conn.id, require('./packets/food').build(@foods)
         @send conn.id, require('./packets/highscore').build('iiegor', 'test message')
+        @send conn.id, require('./packets/food').build(@foods)
 
         @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.username} was connected!"
       else if firstByte is 109
@@ -138,26 +146,6 @@ class Server
 
   handleError: (e) ->
     @logger.log @logger.level.ERROR, e.message, e
-
-  ticker: ->
-    local = new Date
-
-    @tick += (local - @time)
-    @time = local
-
-    if @tick >= 50
-      # Leaderboard packet is sended here
-
-      # Test
-      ###
-      for client in @clients
-        client.snake.body.x += 1
-        client.snake.body.y += 1
-
-        @broadcast require('./packets/direction').build(client.id, client.snake.body.x, client.snake.body.y)
-      ###
-
-      @tick = 0
 
   spawnFood: (amount) ->
     i = 0
@@ -171,6 +159,9 @@ class Server
       @foods.push(new food(id, xPos, yPos, size, color))
 
       i++
+
+  updateLeaderboard: ->
+    # ..
 
   send: (id, data) ->
     @clients[id].send data, {binary: true}
