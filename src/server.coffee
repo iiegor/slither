@@ -33,7 +33,7 @@ class Server
   ###
   bind: ->
     @server = new ws.Server {@port, path: '/slither'}, =>
-      @logger.log @logger.level.INFO, "Listening on port #{@port}"
+      @logger.log @logger.level.INFO, "Listening for connections"
 
       @spawnFood(global.Application.config['start-food'])
 
@@ -99,20 +99,19 @@ class Server
         conn.snake.direction.x = x * 125
         conn.snake.direction.y = y * 125
 
-        conn.snake.direction.angle = degrees
+        conn.snake.direction.angle = value * 1.44
       else if value is 253
         console.log 'Snake in speed mode -', value
       else if value is 254
         console.log 'Snake in normal mode -', value
       else if value is 251
-        # Leaderboard
-        @updateLeaderboard()
-
         # Snake movement
+        # TODO: Move this to a ticker method
         if conn.snake?
-          conn.snake.body.x += conn.snake.direction.x
-          conn.snake.body.y += conn.snake.direction.y
+          conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
+          conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
 
+          @send conn.id, require('./packets/direction').build(conn.snake.direction.angle)
           @send conn.id, require('./packets/move').build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
         
         # Pong
@@ -131,14 +130,22 @@ class Server
         skin = message.readInt8 2, data
         username = message.readString 3, data, data.byteLength
 
+        # Create the snake
         conn.snake = new snake(conn.id, username, skin)
-
         @broadcast require('./packets/snake').build(conn.snake)
-        
-        @send conn.id, require('./packets/highscore').build('iiegor', 'test message')
-        @send conn.id, require('./packets/food').build(@foods)
 
         @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.username} was connected!"
+        
+        # Send spawned food
+        @send conn.id, require('./packets/food').build(@foods)
+
+        # Update highscore and leaderboard
+        rankSorted = []
+        rank = 1
+        topTen = []
+
+        @send conn.id, require('./packets/highscore').build('iiegor', 'A high score message')
+        @send conn.id, require('./packets/leaderboard').build(rank, rankSorted.length, topTen)
       else if firstByte is 109
         console.log '->', secondByte
       else
@@ -148,6 +155,7 @@ class Server
     @logger.log @logger.level.ERROR, e.message, e
 
   spawnFood: (amount) ->
+    # TODO: Split the food message into different parts and send them
     i = 0
     while i < amount
       xPos = math.randomInt(0, 65535)
@@ -159,9 +167,6 @@ class Server
       @foods.push(new food(id, xPos, yPos, size, color))
 
       i++
-
-  updateLeaderboard: ->
-    # ..
 
   send: (id, data) ->
     @clients[id].send data, {binary: true}

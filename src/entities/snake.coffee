@@ -29,9 +29,12 @@ class Snake
       y: 0.1
       angle: 0
 
-    @parts = [
-      {
-        x: 138
-        y: 43
-      }
-    ]
+    @parts = []
+
+    # Development code
+    # Append some parts to the snake
+    i = 0
+    while i < 20
+      @parts.push({x: i + 1, y: i + 2})
+
+      i += 2

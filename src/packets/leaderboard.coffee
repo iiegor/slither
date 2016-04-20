@@ -21,13 +21,13 @@ exports.build = (rank, players, top) ->
 
   i = 0
   while i < top.length
-    b += message.writeInt16 b, arr, top[i].J
-    b += message.writeInt24 b, arr, top[i].I
+    b += message.writeInt16 b, arr, top[i].snake.J
+    b += message.writeInt24 b, arr, top[i].snake.I
 
     b += message.writeInt8 b, arr, math.randomInt(0, 8)
-    b += message.writeInt8 b, arr, top[i].username.length
+    b += message.writeInt8 b, arr, top[i].snake.username.length
 
-    b += message.writeString b, arr, top[i].username
+    b += message.writeString b, arr, top[i].snake.username
 
     i++
 
