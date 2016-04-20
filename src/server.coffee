@@ -111,8 +111,8 @@ class Server
           conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
           conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
 
-          @send conn.id, require('./packets/direction').build(conn.snake.direction.angle)
-          @send conn.id, require('./packets/move').build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
+          @broadcast require('./packets/direction').build(conn.snake.direction.angle)
+          @broadcast require('./packets/move').build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
         
         # Pong
         @send conn.id, require('./packets/pong').buffer
@@ -135,17 +135,17 @@ class Server
         @broadcast require('./packets/snake').build(conn.snake)
 
         @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.username} was connected!"
+
+        # Spawn current playing snakes
+        @spawnSnakes(conn.id)
         
         # Send spawned food
         @send conn.id, require('./packets/food').build(@foods)
 
         # Update highscore and leaderboard
-        rankSorted = []
-        rank = 1
-        topTen = []
-
+        # TODO: Move this to a ticker method
+        @send conn.id, require('./packets/leaderboard').build([conn], 1, [conn])
         @send conn.id, require('./packets/highscore').build('iiegor', 'A high score message')
-        @send conn.id, require('./packets/leaderboard').build(rank, rankSorted.length, topTen)
       else if firstByte is 109
         console.log '->', secondByte
       else
@@ -153,6 +153,10 @@ class Server
 
   handleError: (e) ->
     @logger.log @logger.level.ERROR, e.message, e
+
+  spawnSnakes: (id) ->
+    @clients.forEach (client) =>
+      @send(id, require('./packets/snake').build(client.snake)) if client.id isnt id
 
   spawnFood: (amount) ->
     # TODO: Split the food message into different parts and send them
