@@ -140,7 +140,8 @@ class Server
         @spawnSnakes(conn.id)
         
         # Send spawned food
-        @send conn.id, require('./packets/food').build(@foods)
+        # INFO: Split the food message into 10 chunks and send them
+        @spawnFoodChunks(conn.id, 10)
 
         # Update highscore and leaderboard
         # TODO: Move this to a ticker method
@@ -159,7 +160,6 @@ class Server
       @send(id, require('./packets/snake').build(client.snake)) if client.id isnt id
 
   spawnFood: (amount) ->
-    # TODO: Split the food message into different parts and send them
     i = 0
     while i < amount
       xPos = math.randomInt(0, 65535)
@@ -171,6 +171,10 @@ class Server
       @foods.push(new food(id, xPos, yPos, size, color))
 
       i++
+
+  spawnFoodChunks: (id, amount) ->
+    for chunk in math.chunk(@foods, amount)
+      @send id, require('./packets/food').build(chunk)
 
   send: (id, data) ->
     @clients[id].send data, {binary: true}
