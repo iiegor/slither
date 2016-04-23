@@ -3,5 +3,5 @@ class Food
   ###
   Section: Construction
   ###
-  constructor: (@id, @xPos, @yPos, @size, @color) ->
+  constructor: (@id, @x, @y, @size, @color) ->
     # ..

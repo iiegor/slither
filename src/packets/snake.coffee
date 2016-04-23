@@ -3,10 +3,10 @@ message = require '../utils/message'
 type = 's'.charCodeAt(0)
 
 exports.build = (snake) ->
-  usernameLength = snake.username.length
+  nameLength = snake.name.length
   partsLength = snake.parts.length * 2
 
-  arr = new Uint8Array(27 + usernameLength + 6 + partsLength)
+  arr = new Uint8Array(27 + nameLength + 6 + partsLength)
   b = 0
 
   b += message.writeInt8 b, arr, 0
@@ -25,11 +25,11 @@ exports.build = (snake) ->
   b += message.writeInt24 b, arr, snake.body.x
   b += message.writeInt24 b, arr, snake.body.y
 
-  b += message.writeInt8 b, arr, usernameLength
+  b += message.writeInt8 b, arr, nameLength
 
-  message.writeString b, arr, snake.username
+  message.writeString b, arr, snake.name
 
-  index = b + usernameLength
+  index = b + nameLength
   message.writeInt24 index, arr, snake.head.x
   message.writeInt24 index + 3, arr, snake.head.y
   index += 6

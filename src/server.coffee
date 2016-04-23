@@ -128,13 +128,13 @@ class Server
       if firstByte is 115 and secondByte is 5
         # TODO: Maybe we need to check if the skin exists?
         skin = message.readInt8 2, data
-        username = message.readString 3, data, data.byteLength
+        name = message.readString 3, data, data.byteLength
 
         # Create the snake
-        conn.snake = new snake(conn.id, username, skin)
+        conn.snake = new snake(conn.id, name, math.randomSpawnPoint(), skin)
         @broadcast require('./packets/snake').build(conn.snake)
 
-        @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.username} was connected!"
+        @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.name} was connected!"
 
         # Spawn current playing snakes
         @spawnSnakes(conn.id)
@@ -162,13 +162,13 @@ class Server
   spawnFood: (amount) ->
     i = 0
     while i < amount
-      xPos = math.randomInt(0, 65535)
-      yPos = math.randomInt(0, 65535)
-      id = xPos * global.Application.config['map-size'] * 3 + yPos
+      x = math.randomInt(0, 65535)
+      y = math.randomInt(0, 65535)
+      id = x * global.Application.config['map-size'] * 3 + y
       color = math.randomInt(0, global.Application.config['food-colors'])
       size = math.randomInt(global.Application.config['food-size'][0], global.Application.config['food-size'][1])
 
-      @foods.push(new food(id, xPos, yPos, size, color))
+      @foods.push(new food(id, x, y, size, color))
 
       i++
 

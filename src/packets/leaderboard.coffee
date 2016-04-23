@@ -4,7 +4,7 @@ math = require '../utils/math'
 exports.build = (rank, players, top) ->
   length = 0
   for player in top
-    length += player.snake.username.length
+    length += player.snake.name.length
 
   arr = new Uint8Array((8 + length) + (top.length * 7))
 
@@ -25,9 +25,9 @@ exports.build = (rank, players, top) ->
     b += message.writeInt24 b, arr, top[i].snake.I
 
     b += message.writeInt8 b, arr, math.randomInt(0, 8)
-    b += message.writeInt8 b, arr, top[i].snake.username.length
+    b += message.writeInt8 b, arr, top[i].snake.name.length
 
-    b += message.writeString b, arr, top[i].snake.username
+    b += message.writeString b, arr, top[i].snake.name
 
     i++
 

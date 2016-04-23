@@ -18,8 +18,8 @@ exports.build = (foods) ->
     food = foods[i]
 
     b += message.writeInt8 b, arr, food.color
-    b += message.writeInt16 b, arr, food.xPos
-    b += message.writeInt16 b, arr, food.yPos
+    b += message.writeInt16 b, arr, food.x
+    b += message.writeInt16 b, arr, food.y
     b += message.writeInt8 b, arr, food.color
 
     i++
