@@ -13,33 +13,43 @@ exports.build = (snake) ->
   b += message.writeInt8 b, arr, 0
 
   b += message.writeInt8 b, arr, type
+
+  ## Append snake id
   b += message.writeInt16 b, arr, snake.id
+
+  ## Append snake stop param
   b += message.writeInt24 b, arr, snake.D
 
+  ## Append unknown
   b += message.writeInt8 b, arr, 0
 
+  ## Append possible angles of the snake
   b += message.writeInt24 b, arr, snake.X
+
+  ## Append snake speed
   b += message.writeInt16 b, arr, snake.speed
-  b += message.writeInt24 b, arr, 0.028860630325116536 * 16777215
+
+  ## Unkown
+  b += message.writeInt24 b, arr, 0
+
+  ## Append snake skin
   b += message.writeInt8 b, arr, snake.skin
+
+  ## Append spawn body positions
   b += message.writeInt24 b, arr, snake.body.x
   b += message.writeInt24 b, arr, snake.body.y
 
+  ## Append name
   b += message.writeInt8 b, arr, nameLength
+  b += message.writeString b, arr, snake.name
 
-  message.writeString b, arr, snake.name
-
-  index = b + nameLength
-  message.writeInt24 index, arr, snake.head.x
-  message.writeInt24 index + 3, arr, snake.head.y
-  index += 6
+  b += message.writeInt24 b, arr, snake.head.x
+  b += message.writeInt24 b, arr, snake.head.y
 
   i = 0
   while i < snake.parts.length
-    message.writeInt8 index, arr, snake.parts[i].x
-    message.writeInt8 index + 1, arr, snake.parts[i].y
-
-    index += 2
+    b += message.writeInt8 b, arr, snake.parts[i].x
+    b += message.writeInt8 b, arr, snake.parts[i].y
 
     i++
 

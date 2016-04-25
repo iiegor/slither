@@ -121,7 +121,7 @@ class Server
           conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
           conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
 
-          @broadcast directionMessage.build(conn.snake.direction.angle)
+          @broadcast directionMessage.build(conn.snake.id, conn.snake.direction)
           @broadcast movementMessage.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
         
         # Pong
