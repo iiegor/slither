@@ -6,7 +6,7 @@ class Snake
   Section: Construction
   ###
   constructor: (@id, @name, @body, @skin) ->
-    @speed = 5.76 * 1e3
+    @speed = 5.79 * 1e3
 
     @head = @body
 

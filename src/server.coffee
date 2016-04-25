@@ -4,6 +4,17 @@ url = require 'url'
 snake = require './entities/snake'
 food = require './entities/food'
 
+directionMessage = require './messages/direction'
+movementMessage = require './messages/move'
+initialMessage = require './messages/initial'
+pongMessage = require './messages/pong'
+leaderboardMessage = require './messages/leaderboard'
+snakeMessage = require './messages/snake'
+highscoreMessage = require './messages/highscore'
+foodMessage = require './messages/food'
+sectorMessage = require './messages/sector'
+minimapMessage = require './messages/minimap'
+
 logger = require './utils/logger'
 message = require './utils/message'
 math = require './utils/math'
@@ -77,7 +88,7 @@ class Server
     conn.on 'error', close.bind(this, conn.id)
     conn.on 'close', close.bind(this, conn.id)
 
-    @send conn.id, require('./packets/map').buffer
+    @send conn.id, initialMessage.buffer
 
   handleMessage: (conn, data) ->
     return if data.length == 0
@@ -111,11 +122,11 @@ class Server
           conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
           conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
 
-          @broadcast require('./packets/direction').build(conn.snake.direction.angle)
-          @broadcast require('./packets/move').build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
+          @broadcast directionMessage.build(conn.snake.direction.angle)
+          @broadcast movementMessage.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
         
         # Pong
-        @send conn.id, require('./packets/pong').buffer
+        @send conn.id, pongMessage.buffer
     else
       ###
       firstByte:
@@ -132,7 +143,7 @@ class Server
 
         # Create the snake
         conn.snake = new snake(conn.id, name, math.randomSpawnPoint(), skin)
-        @broadcast require('./packets/snake').build(conn.snake)
+        @broadcast snakeMessage.build(conn.snake)
 
         @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.name} was connected!"
 
@@ -141,12 +152,13 @@ class Server
         
         # Send spawned food
         # INFO: Split the food message into 10 chunks and send them
-        @spawnFoodChunks(conn.id, 10)
+        # @spawnFoodChunks(conn.id, 10)
 
-        # Update highscore and leaderboard
+        # Update highscore, leaderboard and minimap
         # TODO: Move this to a ticker method
-        @send conn.id, require('./packets/leaderboard').build([conn], 1, [conn])
-        @send conn.id, require('./packets/highscore').build('iiegor', 'A high score message')
+        @send conn.id, leaderboardMessage.build([conn], 1, [conn])
+        @send conn.id, highscoreMessage.build('iiegor', 'A high score message')
+        @send conn.id, minimapMessage.build(@foods)
       else if firstByte is 109
         console.log '->', secondByte
       else
@@ -157,7 +169,7 @@ class Server
 
   spawnSnakes: (id) ->
     @clients.forEach (client) =>
-      @send(id, require('./packets/snake').build(client.snake)) if client.id isnt id
+      @send(id, snakeMessage.build(client.snake)) if client.id isnt id
 
   spawnFood: (amount) ->
     i = 0
@@ -174,7 +186,7 @@ class Server
 
   spawnFoodChunks: (id, amount) ->
     for chunk in math.chunk(@foods, amount)
-      @send id, require('./packets/food').build(chunk)
+      @send id, foodMessage.build(chunk)
 
   send: (id, data) ->
     @clients[id].send data, {binary: true}

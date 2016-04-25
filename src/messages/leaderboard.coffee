@@ -1,6 +1,8 @@
 message = require '../utils/message'
 math = require '../utils/math'
 
+type = 'l'.charCodeAt(0)
+
 exports.build = (rank, players, top) ->
   length = 0
   for player in top
@@ -13,7 +15,7 @@ exports.build = (rank, players, top) ->
   b += message.writeInt8 b, arr, 0
 
   ## Append message type
-  b += message.writeInt8 b, arr, 'l'.charCodeAt(0)
+  b += message.writeInt8 b, arr, type
 
   b += message.writeInt8 b, arr, 0
   b += message.writeInt16 b, arr, rank
