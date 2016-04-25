@@ -69,8 +69,7 @@ class Server
       conn.close()
       return
 
-    @counter++
-    conn.id = @counter
+    conn.id = ++@counter
     conn.remoteAddress = conn._socket.remoteAddress
 
     # Push to clients
