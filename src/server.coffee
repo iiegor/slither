@@ -133,14 +133,14 @@ class Server
         # Spawn current playing snakes
         @spawnSnakes(conn.id)
 
-        # Update snake position each 100ms
+        # Update snake position each 120ms
         conn.snake.update = setInterval(() =>
           conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
           conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
 
           @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
           @broadcast messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
-        , 100)
+        , 120)
         
         # Send spawned food
         # INFO: Split the food message into 10 chunks and send them
