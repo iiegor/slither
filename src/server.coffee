@@ -4,16 +4,7 @@ url = require 'url'
 snake = require './entities/snake'
 food = require './entities/food'
 
-directionMessage = require './messages/direction'
-movementMessage = require './messages/move'
-initialMessage = require './messages/initial'
-pongMessage = require './messages/pong'
-leaderboardMessage = require './messages/leaderboard'
-snakeMessage = require './messages/snake'
-highscoreMessage = require './messages/highscore'
-foodMessage = require './messages/food'
-sectorMessage = require './messages/sector'
-minimapMessage = require './messages/minimap'
+messages = require './messages'
 
 logger = require './utils/logger'
 message = require './utils/message'
@@ -81,13 +72,17 @@ class Server
 
       conn.send = -> return
 
+      # This avoid the snake still moving when the client close the socket
+      # TODO: Check if this is the right behavior
+      # clearInterval(conn.snake.update)
+
       delete @clients[id]
 
     conn.on 'message', @handleMessage.bind(this, conn)
     conn.on 'error', close.bind(this, conn.id)
     conn.on 'close', close.bind(this, conn.id)
 
-    @send conn.id, initialMessage.buffer
+    @send conn.id, messages.initial.buffer
 
   handleMessage: (conn, data) ->
     return if data.length == 0
@@ -95,7 +90,6 @@ class Server
     if data.byteLength is 1
       value = message.readInt8 0, data
 
-      # Ping / pong
       if value <= 250
         console.log 'Snake going to', value
 
@@ -114,18 +108,8 @@ class Server
         console.log 'Snake in speed mode -', value
       else if value is 254
         console.log 'Snake in normal mode -', value
-      else if value is 251
-        # Snake movement
-        # TODO: Move this to a ticker method
-        if conn.snake?
-          conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
-          conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
-
-          @broadcast directionMessage.build(conn.snake.id, conn.snake.direction)
-          @broadcast movementMessage.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
-        
-        # Pong
-        @send conn.id, pongMessage.buffer
+      else if value is 251        
+        @send conn.id, messages.pong.buffer
     else
       ###
       firstByte:
@@ -141,13 +125,22 @@ class Server
         name = message.readString 3, data, data.byteLength
 
         # Create the snake
-        conn.snake = new snake(conn.id, name, math.randomSpawnPoint(), skin)
-        @broadcast snakeMessage.build(conn.snake)
+        conn.snake = new snake(conn.id, name, x: 28907.6 * 5, y: 21137.4 * 5, skin)
+        @broadcast messages.snake.build(conn.snake)
 
         @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.name} was connected!"
 
         # Spawn current playing snakes
         @spawnSnakes(conn.id)
+
+        # Update snake position each 100ms
+        conn.snake.update = setInterval(() =>
+          conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
+          conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
+
+          @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
+          @broadcast messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
+        , 100)
         
         # Send spawned food
         # INFO: Split the food message into 10 chunks and send them
@@ -155,9 +148,9 @@ class Server
 
         # Update highscore, leaderboard and minimap
         # TODO: Move this to a ticker method
-        @send conn.id, leaderboardMessage.build([conn], 1, [conn])
-        @send conn.id, highscoreMessage.build('iiegor', 'A high score message')
-        @send conn.id, minimapMessage.build(@foods)
+        @send conn.id, messages.leaderboard.build([conn], 1, [conn])
+        @send conn.id, messages.highscore.build('iiegor', 'A high score message')
+        @send conn.id, messages.minimap.build(@foods)
       else if firstByte is 109
         console.log '->', secondByte
       else
@@ -168,7 +161,7 @@ class Server
 
   spawnSnakes: (id) ->
     @clients.forEach (client) =>
-      @send(id, snakeMessage.build(client.snake)) if client.id isnt id
+      @send(id, messages.snake.build(client.snake)) if client.id isnt id
 
   spawnFood: (amount) ->
     i = 0
@@ -185,7 +178,7 @@ class Server
 
   spawnFoodChunks: (id, amount) ->
     for chunk in math.chunk(@foods, amount)
-      @send id, foodMessage.build(chunk)
+      @send id, messages.food.build(chunk)
 
   send: (id, data) ->
     @clients[id].send data, {binary: true}
