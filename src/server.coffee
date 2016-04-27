@@ -37,7 +37,8 @@ class Server
     @server = new ws.Server {@port, path: '/slither'}, =>
       @logger.log @logger.level.INFO, "Listening for connections"
 
-      @spawnFood(global.Application.config['start-food'])
+      # Generate start food
+      @generateFood(global.Application.config['start-food'])
 
     @server.on 'connection', @handleConnection.bind(this)
     @server.on 'error', @handleError.bind(this)
@@ -143,11 +144,11 @@ class Server
         , 120)
         
         # Send spawned food
-        # INFO: Split the food message into 10 chunks and send them
-        # @spawnFoodChunks(conn.id, 10)
+        # TODO: Only send the food inside the current sector
+        @send conn.id, messages.food.build(@foods)
 
         # Update highscore, leaderboard and minimap
-        # TODO: Move this to a ticker method
+        # TODO: Move this to a global tick method
         @send conn.id, messages.leaderboard.build([conn], 1, [conn])
         @send conn.id, messages.highscore.build('iiegor', 'A high score message')
         @send conn.id, messages.minimap.build(@foods)
@@ -159,11 +160,7 @@ class Server
   handleError: (e) ->
     @logger.log @logger.level.ERROR, e.message, e
 
-  spawnSnakes: (id) ->
-    @clients.forEach (client) =>
-      @send(id, messages.snake.build(client.snake)) if client.id isnt id
-
-  spawnFood: (amount) ->
+  generateFood: (amount) ->
     i = 0
     while i < amount
       x = math.randomInt(0, 65535)
@@ -175,6 +172,10 @@ class Server
       @foods.push(new food(id, x, y, size, color))
 
       i++
+
+  spawnSnakes: (id) ->
+    @clients.forEach (client) =>
+      @send(id, messages.snake.build(client.snake)) if client.id isnt id
 
   spawnFoodChunks: (id, amount) ->
     for chunk in math.chunk(@foods, amount)
