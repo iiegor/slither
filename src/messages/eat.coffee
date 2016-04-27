@@ -1,12 +1,21 @@
 message = require '../utils/message'
 
-arr = new Uint8Array(11)
+type = 'h'.charCodeAt(0)
 
-b = 0
-b += message.writeInt8 b, arr, 0
-b += message.writeInt8 b, arr, 0
+exports.build = (id, fam) ->
+  arr = new Uint8Array(8)
+  
+  b = 0
+  b += message.writeInt8 b, arr, 0
+  b += message.writeInt8 b, arr, 0
 
-## Append message type
-b += message.writeInt8 b, arr, 'h'.charCodeAt(0)
+  ## Append message type
+  b += message.writeInt8 b, arr, type
 
-exports.buffer = arr
+  ## Append food id
+  b += message.writeInt16 b, arr, id
+
+  ## Append unknown, related to food fam parameter
+  b += message.writeInt24 b, arr, fam
+
+  arr
