@@ -134,15 +134,19 @@ class Server
         # Spawn current playing snakes
         @spawnSnakes(conn.id)
 
-        # Update snake position each 120ms
-        # TODO: Send if the value is different from the latest sent
+        # Update snake position each 240ms
+        # TODO: Find a proper interval time
         conn.snake.update = setInterval(() =>
+          if conn.snake.lastDirection isnt conn.snake.direction.angle
+            @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
+
+          conn.snake.lastDirection = conn.snake.direction.angle
+
           conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
           conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
-
-          @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
+          
           @broadcast messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
-        , 120)
+        , 240)
         
         # Send spawned food
         # TODO: Only send the food inside the current sector

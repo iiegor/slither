@@ -23,6 +23,8 @@ class Snake
       y: 0.1
       angle: 0
 
+    @lastDirection = null
+
     @parts = []
 
     # Development code
