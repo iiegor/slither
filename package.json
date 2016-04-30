@@ -20,7 +20,9 @@
   },
   "packageDependencies": {},
   "scripts": {
-    "start": "node ./bin/slither"
+    "start": "node ./bin/slither",
+    "start:prod": "node ./bin/slither --prod",
+    "compile": "coffee --output lib --compile src"
   },
   "private": true
 }

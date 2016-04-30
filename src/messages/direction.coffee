@@ -19,10 +19,10 @@ exports.build = (id, direction) ->
   Append position values
   @todo Sending this makes conflict with the normal movement 
   of the snake. Probably due to a bad calculation of the direction parameters.
+  ###
 
   b += message.writeInt8 b, arr, direction.angle
   b += message.writeInt8 b, arr, direction.x 
   b += message.writeInt8 b, arr, direction.y
-  ###
 
   arr

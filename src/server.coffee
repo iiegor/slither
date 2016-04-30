@@ -105,6 +105,8 @@ class Server
         conn.snake.direction.y = y * 125
 
         conn.snake.direction.angle = value * 1.44
+
+        @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
       else if value is 253
         console.log 'Snake in speed mode -', value
       else if value is 254
@@ -139,7 +141,6 @@ class Server
           conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
           conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
 
-          @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
           @broadcast messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
         , 120)
         
