@@ -160,7 +160,11 @@ class Server
         @logger.log @logger.level.ERROR, "Unhandled message #{String.fromCharCode(firstByte)}", null
 
   handleError: (e) ->
-    @logger.log @logger.level.ERROR, e.message, e
+    switch e.code
+      when 'EADDRINUSE'
+        @logger.log @logger.level.ERROR, 'The address is already in use, change the port number', e
+      else
+        @logger.log @logger.level.ERROR, e.message, e
 
   generateFood: (amount) ->
     i = 0
