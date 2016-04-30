@@ -104,10 +104,7 @@ class Server
         conn.snake.direction.x = x * 125
         conn.snake.direction.y = y * 125
 
-        conn.snake.direction.angle = value * 1.44
-
-        # TODO: Fix crash due to bad calculations
-        # @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
+        conn.snake.direction.angle = value
       else if value is 253
         console.log 'Snake in speed mode -', value
       else if value is 254
@@ -138,10 +135,12 @@ class Server
         @spawnSnakes(conn.id)
 
         # Update snake position each 120ms
+        # TODO: Send if the value is different from the latest sent
         conn.snake.update = setInterval(() =>
           conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
           conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
 
+          @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
           @broadcast messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
         , 120)
         
