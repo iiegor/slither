@@ -1,6 +1,6 @@
 module.exports = {
   'env': 'dev',
-  'port': process.env.PORT || 443,
+  'port': process.env.PORT || 8080,
   'origins': ['http://localhost:8000', 'http://slither.io'],
   'max-connections': 1000,
   'logfile': 'slither.log',
