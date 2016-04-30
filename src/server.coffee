@@ -106,7 +106,8 @@ class Server
 
         conn.snake.direction.angle = value * 1.44
 
-        @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
+        # TODO: Fix crash due to bad calculations
+        # @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
       else if value is 253
         console.log 'Snake in speed mode -', value
       else if value is 254
