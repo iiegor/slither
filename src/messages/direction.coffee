@@ -18,7 +18,7 @@ exports.build = (id, direction) ->
   # Append angle (0-250)
   b += message.writeInt8 b, arr, direction.angle
 
-  # Append unknown (Something related to the snake rotation speed - 104 is default)
+  # Append unknown (Rotation speed - 104 is default)
   b += message.writeInt8 b, arr, 104
 
   # Append unkown
