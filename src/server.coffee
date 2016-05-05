@@ -120,7 +120,7 @@ class Server
       secondByte = message.readInt8 1, data
 
       # Create snake
-      if firstByte is 115 and secondByte is 5
+      if firstByte is 115
         # TODO: Maybe we need to check if the skin exists?
         skin = message.readInt8 2, data
         name = message.readString 3, data, data.byteLength
