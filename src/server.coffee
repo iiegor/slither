@@ -92,7 +92,7 @@ class Server
         console.log 'Snake going to', value
 
         # Check if the value is equal to the last value received
-        return if value is conn.snake.direction.lastAngle
+        return if value is conn.snake.direction.angle
 
         radians = (value * 1.44) * (Math.PI / 180)
         speed = 1
@@ -115,7 +115,6 @@ class Server
         ###
 
         conn.snake.direction.angle = value
-        conn.snake.direction.lastAngle = value
 
         # Send the snake direction to all clients
         @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
