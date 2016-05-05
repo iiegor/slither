@@ -11,7 +11,7 @@ b += message.writeInt8 b, arr, 0
 b += message.writeInt8 b, arr, 'a'.charCodeAt(0)
 
 ## Append game radius
-b += message.writeInt24 b, arr, config['map-size']
+b += message.writeInt24 b, arr, config['game-radius']
 
 ## setMscps
 b += message.writeInt16 b, arr, 31

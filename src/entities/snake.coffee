@@ -22,8 +22,7 @@ class Snake
       x: 0.1
       y: 0.1
       angle: 0
-
-    @lastDirection = null
+      lastAngle: 0
 
     @parts = []
 

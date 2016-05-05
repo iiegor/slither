@@ -1,4 +1,5 @@
 exports.direction = require './direction'
+exports.position = require './position'
 exports.movement = require './movement'
 exports.initial = require './initial'
 exports.pong = require './pong'

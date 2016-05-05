@@ -20,7 +20,7 @@ exports.build = (foods) ->
     b += message.writeInt8 b, arr, food.color
     b += message.writeInt16 b, arr, food.x
     b += message.writeInt16 b, arr, food.y
-    b += message.writeInt8 b, arr, food.color
+    b += message.writeInt8 b, arr, food.size
 
     i++
 

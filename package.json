@@ -1,7 +1,7 @@
 {
   "name": "slither-server",
   "description": "Open source slither server implementation",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "main": "./index.js",
   "bin": {
     "slither": "./bin/slither"
@@ -21,7 +21,7 @@
   "packageDependencies": {},
   "scripts": {
     "start": "node ./bin/slither",
-    "start:prod": "node ./bin/slither --prod",
+    "start:prod": "npm run compile && node ./bin/slither --prod",
     "compile": "coffee --output lib --compile src"
   },
   "private": true
