@@ -29,7 +29,7 @@ exports.build = (snake) ->
   ## Append snake speed
   b += message.writeInt16 b, arr, snake.speed
 
-  ## Unkown
+  ## Append unknown
   b += message.writeInt24 b, arr, 0
 
   ## Append snake skin
