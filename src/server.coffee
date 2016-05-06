@@ -100,24 +100,10 @@ class Server
         x = Math.cos(radians) + 1
         y = Math.sin(radians) + 1
 
-        d = Math.sqrt(x*x + y*y)
-
-        if d > 0
-          conn.snake.direction.x = x / d
-          conn.snake.direction.y = y / d
-        else
-          conn.snake.direction.x = 0.0
-          conn.snake.direction.y = 0.0
-
-        ###
         conn.snake.direction.x = x * 127 * speed
         conn.snake.direction.y = y * 127 * speed
-        ###
 
         conn.snake.direction.angle = value
-
-        # Send the snake direction to all clients
-        @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
       else if value is 253
         console.log 'Snake in speed mode -', value
       else if value is 254
@@ -147,12 +133,14 @@ class Server
         # Update snake position each 2s
         # TODO: Find a proper interval time
         conn.snake.update = setInterval(() =>
-          conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle) * 170
-          conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle) * 170
+          conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle * 1.44) * 170
+          conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle * 1.44) * 170
           
-          @broadcast messages.position.build(conn.snake.id, conn.snake.body.x, conn.snake.body.y)
+          @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
+          # TODO: The position is probably bad calculated.
+          # @broadcast messages.position.build(conn.snake.id, conn.snake.body.x, conn.snake.body.y)
           @broadcast messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
-        , 2000)
+        , 240)
         
         # Send spawned food
         # TODO: Only send the food inside the current sector
