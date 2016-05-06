@@ -140,7 +140,7 @@ class Server
           # TODO: The position is probably bad calculated.
           # @broadcast messages.position.build(conn.snake.id, conn.snake.body.x, conn.snake.body.y)
           @broadcast messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
-        , 240)
+        , 2000)
         
         # Send spawned food
         # TODO: Only send the food inside the current sector
