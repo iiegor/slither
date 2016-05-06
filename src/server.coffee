@@ -133,8 +133,13 @@ class Server
         # Update snake position each 2s
         # TODO: Find a proper interval time
         conn.snake.update = setInterval(() =>
+          conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170)
+          conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170)
+
+          ###
           conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle * 1.44) * 170
           conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle * 1.44) * 170
+          ###
           
           @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
           # TODO: The position is probably bad calculated.

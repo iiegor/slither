@@ -16,7 +16,7 @@ exports.build = (id, x, y) ->
   b += message.writeInt16 b, arr, id
 
   ## Append position values
-  b += message.writeInt24 b, arr, x
-  b += message.writeInt24 b, arr, y
+  b += message.writeInt16 b, arr, x
+  b += message.writeInt16 b, arr, y
 
   arr
