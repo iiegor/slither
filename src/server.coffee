@@ -85,7 +85,10 @@ class Server
   handleMessage: (conn, data) ->
     return if data.length == 0
 
-    if data.length is 1
+    if data.length >= 227
+      conn.close()
+      return
+    else if data.length is 1
       value = message.readInt8 0, data
 
       if value <= 250
