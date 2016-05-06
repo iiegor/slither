@@ -44,6 +44,6 @@ b += message.writeInt16 b, arr, 0.028 * 1e3
 b += message.writeInt16 b, arr, 0.43 * 1e3
 
 ## protocol_version
-b += message.writeInt8 b, arr, 6
+b += message.writeInt8 b, arr, 8
 
 exports.buffer = arr

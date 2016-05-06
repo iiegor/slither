@@ -19,6 +19,7 @@ exports.build = (id, direction) ->
   b += message.writeInt8 b, arr, direction.angle
 
   # Append unknown (Rotation speed - 104 is default)
+  # INFO: The rotation speed depends on the angle (probably the difference between lastAngle and current angle).
   b += message.writeInt8 b, arr, 104
 
   # Append unkown

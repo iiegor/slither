@@ -1,7 +1,7 @@
 {
   "name": "slither-server",
   "description": "Open source slither server implementation",
-  "version": "0.0.12",
+  "version": "0.0.12-dev",
   "main": "./index.js",
   "bin": {
     "slither": "./bin/slither"

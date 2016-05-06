@@ -70,7 +70,7 @@ class Server
 
       conn.send = -> return
 
-      # This avoid the snake still moving when the client close the socket
+      # This avoid the snake still moving when the client closes the socket
       # TODO: Check if this is the right behavior
       # clearInterval(conn.snake.update)
 
@@ -94,12 +94,13 @@ class Server
         # Check if the value is equal to the last value received
         return if value is conn.snake.direction.angle
 
-        radians = (value * 1.44) * (Math.PI / 180)
+        radians = value * (Math.PI / 125)
         speed = 1
 
         x = Math.cos(radians) + 1
         y = Math.sin(radians) + 1
 
+        # Must be between 86 - 170
         conn.snake.direction.x = x * 127 * speed
         conn.snake.direction.y = y * 127 * speed
 
@@ -135,17 +136,12 @@ class Server
         conn.snake.update = setInterval(() =>
           conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170)
           conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170)
-
-          ###
-          conn.snake.body.x += Math.cos((Math.PI / 180) * conn.snake.direction.angle * 1.44) * 170
-          conn.snake.body.y += Math.sin((Math.PI / 180) * conn.snake.direction.angle * 1.44) * 170
-          ###
           
           @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
           # TODO: The position is probably bad calculated.
           # @broadcast messages.position.build(conn.snake.id, conn.snake.body.x, conn.snake.body.y)
           @broadcast messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
-        , 2000)
+        , 230)
         
         # Send spawned food
         # TODO: Only send the food inside the current sector

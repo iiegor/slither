@@ -4,8 +4,8 @@ module.exports = {
   'origins': ['http://localhost:8000', 'http://slither.io'],
   'max-connections': 1000,
   'logfile': 'slither.log',
-  'food-colors': 23,
-  'food-size': [35, 70],
+  'food-colors': 8,
+  'food-size': [15, 47],
   'food-amount': 22000,
   'game-radius': 216000,
 };

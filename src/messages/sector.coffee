@@ -1,8 +1,8 @@
 message = require '../utils/message'
 
-type = 'w'.charCodeAt(0)
+type = 'W'.charCodeAt(0)
 
-exports.build = ->
+exports.build = (x, y) ->
   arr = new Uint8Array(8)
   b = 0
 
@@ -10,9 +10,9 @@ exports.build = ->
   b += message.writeInt8 b, arr, 0
 
   b += message.writeInt8 b, arr, type
-  b += message.writeInt8 b, arr, 2 # unknown
 
-  b += message.writeInt16 b, arr, 107 # unkown
-  b += message.writeInt16 b, arr, 38 # unkown
+  # Append sector location
+  b += message.writeInt8 b, arr, x
+  b += message.writeInt8 b, arr, y
 
   arr
