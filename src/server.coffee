@@ -148,7 +148,7 @@ class Server
         
         # Send spawned food
         # TODO: Only send the food inside the current sector
-        @send conn.id, messages.food.build(@foods)
+        # @send conn.id, messages.food.build(@foods)
 
         # Update highscore, leaderboard and minimap
         # TODO: Move this to a global tick method
