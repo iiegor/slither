@@ -46,4 +46,4 @@ b += message.writeInt16 b, arr, 0.43 * 1e3
 ## protocol_version
 b += message.writeInt8 b, arr, 8
 
-exports.buffer = arr
+module.exports = arr

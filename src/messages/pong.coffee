@@ -4,4 +4,4 @@ arr = new Uint8Array(3)
 
 message.writeInt8 2, arr, 'p'.charCodeAt(0)
 
-exports.buffer = arr
+module.exports = arr

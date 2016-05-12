@@ -72,7 +72,7 @@ class Server
 
       # This avoid the snake still moving when the client closes the socket
       # TODO: Check if this is the right behavior
-      # clearInterval(conn.snake.update)
+      clearInterval(conn.snake.update)
 
       delete @clients[id]
 
@@ -80,7 +80,7 @@ class Server
     conn.on 'error', close.bind(this, conn.id)
     conn.on 'close', close.bind(this, conn.id)
 
-    @send conn.id, messages.initial.buffer
+    @send conn.id, messages.initial
 
   handleMessage: (conn, data) ->
     return if data.length == 0
@@ -114,7 +114,7 @@ class Server
         console.log 'Snake in normal mode -', value
       else if value is 251
         # Pong message
-        @send conn.id, messages.pong.buffer
+        @send conn.id, messages.pong
     else
       firstByte = message.readInt8 0, data
       secondByte = message.readInt8 1, data

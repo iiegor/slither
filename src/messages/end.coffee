@@ -12,4 +12,4 @@ b += message.writeInt8 b, arr, 'v'.charCodeAt(0)
 ## 2 - Closing socket and no victory message | 0 - Normal
 b += message.writeInt8 b, arr, 0
 
-exports.buffer = arr
+module.exports = arr
