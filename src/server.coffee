@@ -136,6 +136,7 @@ class Server
 
         # Update snake position each 2s
         # TODO: Find a proper interval time
+        # TODO: Spawn nearby sectors
         conn.snake.update = setInterval(() =>
           conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170)
           conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170)
@@ -145,7 +146,7 @@ class Server
           # @broadcast messages.position.build(conn.snake.id, conn.snake.body.x, conn.snake.body.y)
           @broadcast messages.movement.build(conn.snake.id, conn.snake.direction.x, conn.snake.direction.y)
         , 230)
-        
+
         # Send spawned food
         # TODO: Only send the food inside the current sector
         # @send conn.id, messages.food.build(@foods)
@@ -155,8 +156,6 @@ class Server
         @send conn.id, messages.leaderboard.build([conn], 1, [conn])
         @send conn.id, messages.highscore.build('iiegor', 'A high score message')
         @send conn.id, messages.minimap.build(@foods)
-      else if firstByte is 109
-        console.log '->', secondByte
       else
         @logger.log @logger.level.ERROR, "Unhandled message #{String.fromCharCode(firstByte)}", null
 

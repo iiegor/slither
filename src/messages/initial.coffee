@@ -14,10 +14,10 @@ b += message.writeInt8 b, arr, 'a'.charCodeAt(0)
 b += message.writeInt24 b, arr, config['game-radius']
 
 ## setMscps
-b += message.writeInt16 b, arr, 31
+b += message.writeInt16 b, arr, 411
 
 ## sector_size
-b += message.writeInt16 b, arr, 300
+b += message.writeInt16 b, arr, config['sector-size']
 
 ## sector_count_along_edge
 b += message.writeInt16 b, arr, 144

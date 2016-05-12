@@ -7,5 +7,6 @@ module.exports = {
   'food-colors': 8,
   'food-size': [15, 47],
   'food-amount': 22000,
+  'sector-size': 300,
   'game-radius': 21600,
 };
