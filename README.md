@@ -15,11 +15,13 @@ Obviously, if you want to try the latest version, you can clone the master branc
 The server depends on [Node.js](http://nodejs.org/), [npm](http://npmjs.org/) and other packages that are downloaded and installed during the installation process.
 
 ## Run
-Execute ``$ script/run`` or ``$ npm start`` to start the server.
+You can start the server by executing ``$ script/run`` or ``$ npm start``.
 
+The server will be accesible at ``localhost:8080`` but you will need a client (you can use the original one) to be able to play the game.
+
+## Plugins
 If you want to install a plugin, add it to ``packageDependencies`` in the package.json with the respective version.
 
-Example:
 ```json
 {
   ...
