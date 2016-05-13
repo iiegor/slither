@@ -3,5 +3,5 @@ class Sector
   ###
   Section: Construction
   ###
-  constructor: (@foods) ->
+  constructor: (@position, @foods) ->
     # ..

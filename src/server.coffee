@@ -3,6 +3,7 @@ url = require 'url'
 
 snake = require './entities/snake'
 food = require './entities/food'
+sector = require './entities/sector'
 
 messages = require './messages'
 
@@ -21,6 +22,7 @@ class Server
   clients: []
 
   foods: []
+  sectors: []
 
   ###
   Section: Construction
@@ -35,8 +37,9 @@ class Server
     @server = new ws.Server {@port, path: '/slither'}, =>
       @logger.log @logger.level.INFO, "Listening for connections"
 
-      # Generate start food
+      # Generate food and sectors
       @generateFood(global.Application.config['food-amount'])
+      @generateSectors()
 
     @server.on 'connection', @handleConnection.bind(this)
     @server.on 'error', @handleError.bind(this)
@@ -140,6 +143,16 @@ class Server
         conn.snake.update = setInterval(() =>
           conn.snake.body.x += Math.round(Math.cos(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170)
           conn.snake.body.y += Math.round(Math.sin(conn.snake.direction.angle * 1.44 * Math.PI / 180) * 170)
+
+          ###
+          TODO: Check if the snake is outside the circle
+
+          @info
+           R = gameRadius
+           r = Math.pow((conn.snake.body.x - R), 2) + Math.pow((conn.snake.body.y - R), 2)
+
+           messages.end.build(...) if r < R^2
+          ###
           
           @broadcast messages.direction.build(conn.snake.id, conn.snake.direction)
           # TODO: The position is probably bad calculated.
@@ -175,8 +188,15 @@ class Server
       color = math.randomInt(0, global.Application.config['food-colors'])
       size = math.randomInt(global.Application.config['food-size'][0], global.Application.config['food-size'][1])
 
-      @foods.push(new food(id, x, y, size, color))
+      @foods.push(new food(id, {x, y}, size, color))
 
+      i++
+
+  generateSectors: ->
+    sectorsAmount = global.Application.config['game-radius'] / global.Application.config['sector-size']
+
+    i = 0
+    while i < sectorsAmount
       i++
 
   spawnSnakes: (id) ->
