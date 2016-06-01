@@ -11,6 +11,7 @@ logger = require './utils/logger'
 message = require './utils/message'
 math = require './utils/math'
 
+
 module.exports =
 class Server
   ###
@@ -20,7 +21,8 @@ class Server
   server: null
   counter: 0
   clients: []
-
+  connections: []
+  
   foods: []
   sectors: []
 
@@ -70,7 +72,7 @@ class Server
     # Bind socket connection methods
     close = (id) =>
       @logger.log @logger.level.DEBUG, 'Connection closed.'
-
+      delete @connections[id];
       conn.send = -> return
 
       # This avoid the snake still moving when the client closes the socket
@@ -131,9 +133,10 @@ class Server
         # Create the snake
         conn.snake = new snake(conn.id, name, x: 28907.6 * 5, y: 21137.4 * 5, skin)
         @broadcast messages.snake.build(conn.snake)
-
+        
+        
         @logger.log @logger.level.DEBUG, "A new snake called #{conn.snake.name} was connected!"
-
+        @connections[conn.id] = conn;
         # Spawn current playing snakes
         @spawnSnakes(conn.id)
 
@@ -166,7 +169,7 @@ class Server
 
         # Update highscore, leaderboard and minimap
         # TODO: Move this to a global tick method
-        @send conn.id, messages.leaderboard.build([conn], 1, [conn])
+        @send conn.id, messages.leaderboard.build([conn], (if @connections.length > 10 then @connections[..10] else @connections.length), [conn]) 
         @send conn.id, messages.highscore.build('iiegor', 'A high score message')
         @send conn.id, messages.minimap.build(@foods)
       else
