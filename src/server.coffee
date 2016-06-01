@@ -167,7 +167,7 @@ class Server
 
         # Update highscore, leaderboard and minimap
         # TODO: Move this to a global tick method
-        @send conn.id, messages.leaderboard.build([conn], if @clients.length > 10 then @clients[..10] else @clients.length, @clients) // Not sure if last 2 are correct
+        @send conn.id, messages.leaderboard.build([conn], (if @clients.length > 10 then @clients[..10] else @clients.length), [conn]) 
         @send conn.id, messages.highscore.build('iiegor', 'A high score message')
         @send conn.id, messages.minimap.build(@foods)
       else
