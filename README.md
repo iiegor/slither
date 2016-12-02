@@ -7,7 +7,7 @@ This is supposed to be an open source implementation of the slither server built
 ## Install
 You can get the latest stable release from the [releases](https://github.com/iiegor/slither/releases) page. Once you've downloaded it, you are ready to run the following commands:
 ```sh
-$ cd slither
+$ cd "C:\Directory\To\Slither-Folder"
 $ npm install
 ```
 Obviously, if you want to try the latest version, you can clone the master branch but can have bugs because it's a development branch, so don't use it for production.
